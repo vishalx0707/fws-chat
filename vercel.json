@@ -1,0 +1,19 @@
+{
+  "buildCommand": "cd fws-chat && npm install && npm run build",
+  "outputDirectory": "fws-chat/dist",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/chat",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/transcribe",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    }
+  ]
+}

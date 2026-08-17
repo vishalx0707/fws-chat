@@ -1,7 +1,7 @@
 import os
 import json
 from fastapi import FastAPI, HTTPException, UploadFile, File
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
@@ -34,7 +34,7 @@ class ChatRequest(BaseModel):
 def get_api_key():
     api_key = os.environ.get("GROQ_API_KEY")
     if not api_key or api_key == "your_key_here":
-        raise HTTPException(status_code=500, detail="GROQ_API_KEY not set in backend .env file")
+        raise HTTPException(status_code=500, detail="GROQ_API_KEY not set in backend environment variables")
     return api_key
 
 def get_chat_model():
@@ -47,7 +47,13 @@ def get_chat_model():
         model_kwargs={"top_p": 0.95}
     )
 
+@app.get("/")
+@app.get("/api")
+async def health_check():
+    return {"status": "ok", "service": "FWS Chat API"}
+
 @app.post("/chat")
+@app.post("/api/chat")
 async def chat_endpoint(req: ChatRequest):
     langchain_messages = [SystemMessage(content=SYSTEM_PROMPT)]
     
@@ -78,6 +84,7 @@ async def chat_endpoint(req: ChatRequest):
     return StreamingResponse(generate(), media_type="text/event-stream")
 
 @app.post("/transcribe")
+@app.post("/api/transcribe")
 async def transcribe_audio(file: UploadFile = File(...)):
     try:
         content = await file.read()

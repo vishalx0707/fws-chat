@@ -137,7 +137,7 @@ function App() {
           formData.append('file', audioBlob, 'recording.webm');
           
           try {
-            const res = await fetch('http://localhost:8001/transcribe', {
+            const res = await fetch('/transcribe', {
               method: 'POST',
               body: formData,
             });
@@ -191,7 +191,7 @@ function App() {
     setMessagesForCurrentSession([...newMessages, { role: 'assistant', content: '' }]);
 
     try {
-      const response = await fetch('http://localhost:8001/chat', {
+      const response = await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: newMessages }),
